@@ -1,20 +1,15 @@
 ---
 title: "Quantifying bias"
 author: Grönwold, Palmer, Tilling
-  # - name: "Rolf Grönwold"
-  #   affiliation: Leiden University Medical Centre
-  # - name: "Tom Palmer (`tom.palmer@lancaster.ac.uk`)"
-  #   affiliation: Lancaster University
-  # - name: "Kate Tilling"
-  #   affiliation: MRC IEU, University of Bristol
-#output:
-#  html_document:
-#    theme: flatly
 output: flexdashboard::flex_dashboard
 runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
+require(flexdashboard)
+require(shiny)
+require(rmarkdown)
+require(knitr)
 library(DiagrammeR)
 library(tidyverse)
 library(plotly)
@@ -38,37 +33,26 @@ confounderbias <- function(bxy, bcx, bcy, varc, varx, rho = NULL, vary = NULL) {
 ### Confounder 1
 
 ```{r}
-shinyApp(
   ui = fluidPage(
-    
     withMathJax(),
-    
-    fluidRow(column(
-      4,
+      fluidRow(
+        column(4,
       p(
-        "In this model, shown in the path diagram on the right, we consider the effect of omitting $C$ from the regression of $Y$ on $X$."
+        "In this model, shown in the path diagram, we consider the effect of omitting a confounder, $C$, from the regression of $Y$ on $X$."),
+        br(),
+        p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"),
+        br(),
+        p("The plot below visualises this bias. Change the settings to explore how the bias changes."
+      )),
+      column(4, grVizOutput("confdiagram", width = "250px"))
       ),
-      br(),
-      p(
-        "The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is: $$\\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"
-      ),
-      p(
-        "The plot below visualises this bias. Change the settings to explore how the bias changes."
-      )
-    )),
-    
-    grVizOutput("confdiagram", height = "250px"),
-    
-      fluidRow(column(4,
+      fluidRow(column(12,
                     radioButtons(
                       "dims", "2D or 3D plot:",
-                      c("3D" = "threed",
-                        "2D" = "twod"
+                      c("2D" = "twod",
+                        "3D" = "threed"
                         ), inline = TRUE))),
-
-    plotlyOutput("plot1"),
-    
-    
+  fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(
         4,
@@ -80,21 +64,21 @@ shinyApp(
           value = c(-1, 1)
         )
       ),
-      column(1,
+      column(2,
              numericInput("bcx", "$\\beta_{cx}$", value = 1)),
-      column(1,
+      column(2,
              numericInput("bcy", "$\\beta_{cy}$", value = 1)),
-      column(1,
+      column(2,
              numericInput("varc", "$\\text{var}(C)$", value = 1)),
-      column(1,
+      column(2,
              numericInput("varx", "$\\text{var}(X)$", value = 1))
     )
-    
-  ),
+  )
+  
   server = function(input, output) {
 
     output$confdiagram <- renderGrViz({
-      grViz("
+      grViz({"
       digraph dag {
       graph [rankdir=TB]
       node [shape=plaintext, width=0.3, height=0.3]
@@ -112,7 +96,7 @@ shinyApp(
       Ex -> X [label='1']
       Ey -> Y [label='1']
       }
-      ")
+      "})
     })
     
     dat <- reactive({
@@ -149,7 +133,9 @@ shinyApp(
     })
     
   }
-)
+
+# Define as app ----
+shinyApp(ui = ui, server = server)
 ```
 
 ### Collider 1
@@ -162,6 +148,6 @@ Authors:
 - Tom Palmer, Lancaster University, Lancaster, UK
 - Kate Tilling, MRC IEU, University of Bristol, Bristol, UK
 
-This app is maintained by Tom Palmer <tom.palmer@lancaster.ac.uk>. 
+This app is maintained by Tom Palmer <tom.palmer@lancaster.ac.uk>.
 
 Please email or see the GitHub repo with any questions or comments.
