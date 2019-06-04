@@ -42,24 +42,29 @@ shinyApp(
     
     withMathJax(),
     
-    fluidRow(
-      column(4, 
-             p("In this model, shown in the path diagram on the right, we consider the effect of omitting $C$ from the regression of $Y$ on $X$."),
-             br(),
-             p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is: $$\\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"),
-             p("The plot below visualises this bias. Change the settings to explore how the bias changes.")),
-      column(4, grVizOutput("confdiagram", height = "200px"))
+    fluidRow(column(
+      3,
+      p(
+        "In this model, shown in the path diagram on the right, we consider the effect of omitting $C$ from the regression of $Y$ on $X$."
+      ),
+      br(),
+      p(
+        "The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is: $$\\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"
+      ),
+      p(
+        "The plot below visualises this bias. Change the settings to explore how the bias changes."
+      )
     ),
+    column(6, grVizOutput("confdiagram"))),
     
-
-    fluidRow(column(4,
-                    radioButtons(
+                selectInput(
                       "dims", "2D or 3D plot:",
                       c("3D" = "threed",
-                        "2D" = "twod"
-                        ), inline = TRUE))),
-
+                        "2D" = "twod")
+                    ),
+    
     plotlyOutput("plot1"),
+    
     
     fluidRow(
       column(
