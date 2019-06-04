@@ -71,7 +71,7 @@ confounderbias <- function(bxy, bcx, bcy, varc, varx, rho = NULL, vary = NULL) {
       column(2,
              numericInput("varc", "$\\text{var}(C)$", value = 1)),
       column(2,
-             numericInput("varx", "$\\text{var}(X)$", value = 1))
+             numericInput("varx", "$\\sigma^2_{X}$", value = 1))
     )
   )
   
