@@ -1,0 +1,159 @@
+---
+title: "Quantifying bias"
+author: Grönwold, Palmer, Tilling
+  # - name: "Rolf Grönwold"
+  #   affiliation: Leiden University Medical Centre
+  # - name: "Tom Palmer (`tom.palmer@lancaster.ac.uk`)"
+  #   affiliation: Lancaster University
+  # - name: "Kate Tilling"
+  #   affiliation: MRC IEU, University of Bristol
+#output:
+#  html_document:
+#    theme: flatly
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(DiagrammeR)
+library(tidyverse)
+library(plotly)
+```
+
+```{r, include=FALSE}
+confounderbias <- function(bxy, bcx, bcy, varc, varx, rho = NULL, vary = NULL) {
+  if (is.null(rho)) {
+    (bcx * bcy * varc) / (bcx^2 * varc + varx)
+  } else {
+    (rho * sqrt(vary)) / sqrt(varx)
+  }
+}
+```
+
+# Biases
+
+## Biases {.tabset}
+
+### Confounder 1
+
+```{r}
+shinyApp(
+  ui = fluidPage(
+    
+    withMathJax(),
+    
+    fluidRow(
+      column(4, 
+             p("In this model, shown in the path diagram on the right, we consider the effect of omitting $C$ from the regression of $Y$ on $X$."),
+             br(),
+             p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is: $$\\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"),
+             p("The plot below visualises this bias. Change the settings to explore how the bias changes.")),
+      column(4, grVizOutput("confdiagram", height = "200px"))
+    ),
+    
+
+    fluidRow(column(4,
+                    radioButtons(
+                      "dims", "2D or 3D plot:",
+                      c("3D" = "threed",
+                        "2D" = "twod"
+                        ), inline = TRUE))),
+
+    plotlyOutput("plot1"),
+    
+    fluidRow(
+      column(
+        4,
+        sliderInput(
+          "bxy",
+          label = "$\\beta_{xy}$",
+          min = -5,
+          max = 5,
+          value = c(-1, 1)
+        )
+      ),
+      column(1,
+             numericInput("bcx", "$\\beta_{cx}$", value = 1)),
+      column(1,
+             numericInput("bcy", "$\\beta_{cy}$", value = 1)),
+      column(1,
+             numericInput("varc", "$\\text{var}(C)$", value = 1)),
+      column(1,
+             numericInput("varx", "$\\text{var}(X)$", value = 1))
+    )
+    
+  ),
+  server = function(input, output) {
+
+    output$confdiagram <- renderGrViz({
+      grViz("
+      digraph dag {
+      graph [rankdir=TB]
+      node [shape=plaintext, width=0.3, height=0.3]
+      X 
+      C 
+      Y
+      node [shape=circle, height=0.3, fixedsize=true]
+      Ex [label='&epsilon;@_{x}']
+      Ey [label='&epsilon;@_{y}']
+      { rank = same; X Y }
+      X -> Y [minlen=3, label='&beta;@_{xy}']
+      C -> X [label='&beta;@_{cx}']
+      C -> Y [minlen=.5, label='&beta;@_{cy}']
+      C -> C [dir='both', headport='n', tailport='n']
+      Ex -> X [label='1']
+      Ey -> Y [label='1']
+      }
+      ")
+    })
+    
+    dat <- reactive({
+      xvar = seq(input$bxy[1], input$bxy[2], by = 0.01)
+      nrow = length(xvar)
+      bias = numeric(nrow)
+      for (i in 1:nrow) {
+        bias[i] <- confounderbias(
+          bxy = xvar[i],
+          bcx = input$bcx,
+          bcy = input$bcy,
+          varc = input$varc,
+          varx = input$varx
+        )
+      }
+      data.frame(xvar, bias)
+    })
+    
+    output$plot1 <- renderPlotly({
+      
+      plot2d <- 
+        ggplotly(
+        ggplot(dat(), aes(x = xvar, y = bias)) + 
+        geom_line() + 
+        ylab("Bias") + 
+        xlab("$\\beta_{xy}$")
+      )
+      
+      plot3d <- plot_ly(
+        x = dat()$bcx, y = dat()$bcy, z = dat()$bias, type = "surface"
+      )
+      
+      switch(input$dims, twod = plot2d, threed = plot3d)
+    })
+    
+  }
+)
+```
+
+### Collider 1
+
+# About
+
+Authors:
+
+- Rolf Grönwold, Leiden University Medical Centre, Leiden, Netherlands
+- Tom Palmer, Lancaster University, Lancaster, UK
+- Kate Tilling, MRC IEU, University of Bristol, Bristol, UK
+
+This app is maintained by Tom Palmer <tom.palmer@lancaster.ac.uk>. 
+
+Please email or see the GitHub repo with any questions or comments.
