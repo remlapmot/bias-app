@@ -21,6 +21,7 @@ library(plotly)
 ```
 
 ```{r, include=FALSE}
+# functions for the biases
 confounderbias <- function(bxy, bcx, bcy, varc, varx, rho = NULL, vary = NULL) {
   if (is.null(rho)) {
     (bcx * bcy * varc) / (bcx^2 * varc + varx)
@@ -43,7 +44,7 @@ shinyApp(
     withMathJax(),
     
     fluidRow(column(
-      3,
+      4,
       p(
         "In this model, shown in the path diagram on the right, we consider the effect of omitting $C$ from the regression of $Y$ on $X$."
       ),
@@ -54,15 +55,17 @@ shinyApp(
       p(
         "The plot below visualises this bias. Change the settings to explore how the bias changes."
       )
-    ),
-    column(6, grVizOutput("confdiagram"))),
+    )),
     
-                selectInput(
+    grVizOutput("confdiagram", height = "250px"),
+    
+      fluidRow(column(4,
+                    radioButtons(
                       "dims", "2D or 3D plot:",
                       c("3D" = "threed",
-                        "2D" = "twod")
-                    ),
-    
+                        "2D" = "twod"
+                        ), inline = TRUE))),
+
     plotlyOutput("plot1"),
     
     
