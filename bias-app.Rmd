@@ -144,7 +144,7 @@ shinyApp(ui = ui, server = server)
 
 Authors:
 
-- Rolf Grönwold, Leiden University Medical Centre, Leiden, Netherlands
+- Rolf Grönwold, Department of Clinical Epidemiology/Department of Medical Statistics, Leiden University Medical Centre, Leiden, Netherlands
 - Tom Palmer, Lancaster University, Lancaster, UK
 - Kate Tilling, MRC IEU, University of Bristol, Bristol, UK
 
