@@ -1,15 +1,11 @@
 ---
 title: "Bias App"
-author: # Grönwold, Palmer, Tilling
+#author: Grönwold, Palmer, Tilling
 output: flexdashboard::flex_dashboard
 runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-require(flexdashboard)
-require(shiny)
-require(rmarkdown)
-require(knitr)
 library(DiagrammeR)
 library(tidyverse)
 library(plotly)
@@ -110,7 +106,6 @@ colliderbias <-
     })
     
     output$plot1 <- renderPlotly({
-
         ggplotly(
         ggplot(data = data.frame(x = 0), 
                mapping = aes(x = x)) + 
@@ -123,9 +118,7 @@ colliderbias <-
         ylab("Bias") + 
         xlab("$\\beta_{cx}$")
       )
-      
     })
-    
   }
 
 # Define as app ----
@@ -207,7 +200,7 @@ shinyApp(ui = ui, server = server)
                                   varx = input$varx)) +
         scale_x_continuous(limits = c(input$xmin, input$xmax)) + 
         ylab("Bias") + 
-        xlab("$\\beta_{cx}$")
+        xlab("$\\beta_{xc}$")
       )
       
     })
