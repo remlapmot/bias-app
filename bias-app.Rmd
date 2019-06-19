@@ -59,7 +59,7 @@ colliderbias <-
       p(
         "In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, \\(C\\), from the regression of \\(Y\\) on \\(X\\)."),
         br(),
-        p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for \\(C\\) is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{Var}(C)}{\\beta_{cx}^2\\text{Var}(C) + \\sigma_{X}^2}$$"),
+        p("The bias in the estimate of \\(\\beta_{xy}\\) when we do not adjust for \\(C\\) is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{Var}(C)}{\\beta_{cx}^2\\text{Var}(C) + \\sigma_{X}^2}$$"),
         br(),
         p("The plot below visualises this bias. Change the settings to explore how the bias changes."
       )),
@@ -136,7 +136,7 @@ shinyApp(ui = ui, server = server)
       p(
         "In this model, shown in the path diagram on the right, we consider the effect of including a collider, \\(C\\), in the regression of \\(Y\\) on \\(X\\) and \\(C\\)."),
         br(),
-        p("The bias in the estimate of $\\beta_{xy}$ when we adjust for $C$ is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{Var}(Y)- \\beta_{xy}^2\\text{Var}(X))\\beta_{yc}}{\\text{Var}(C) - \\text{Var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
+        p("The bias in the estimate of \\(\\beta_{xy}\\) when we adjust for \\(C\\) is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{Var}(Y)- \\beta_{xy}^2\\text{Var}(X))\\beta_{yc}}{\\text{Var}(C) - \\text{Var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
         br(),
         p("The plot below visualises this bias. Change the settings to explore how the bias changes."
       )),
