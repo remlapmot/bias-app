@@ -23,7 +23,9 @@ confounderbias <-
            varc = 1,
            sigma2x = 1,
            rho = NULL,
-           vary = NULL) {
+           vary = NULL,
+           varx = NULL) {
+    # x is bcx
     if (is.null(rho)) {
       bcy <- x / ratio
       (x * bcy * varc) / (x ^ 2 * varc + sigma2x)
@@ -31,6 +33,14 @@ confounderbias <-
       (rho * sqrt(vary)) / sqrt(varx)
     }
   }
+
+colliderbias <- function(x, ratio, bxy, varx = 1, vary = 1, varc = 1) {
+  # x is bxc
+  byc <- x / ratio
+  num <- -1 * (bxy * bxy + x) * (vary - bxy^2 * varx) * byc
+  den <- varc - varx * (bxy * byc + x)^2
+  num / den
+}
 ```
 
 # Confounding {data-height=800}
