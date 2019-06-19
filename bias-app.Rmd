@@ -1,6 +1,6 @@
 ---
 title: "Bias App"
-author: Grönwold, Palmer, Tilling
+author: # Grönwold, Palmer, Tilling
 output: flexdashboard::flex_dashboard
 runtime: shiny
 ---
