@@ -187,7 +187,6 @@ shinyApp(ui = ui, server = server)
     })
     
     output$plot1 <- renderPlotly({
-
         ggplotly(
         ggplot(data = data.frame(x = 0), 
                mapping = aes(x = x)) + 
@@ -202,9 +201,7 @@ shinyApp(ui = ui, server = server)
         ylab("Bias") + 
         xlab("$\\beta_{xc}$")
       )
-      
     })
-    
   }
 
 # Define as app ----
