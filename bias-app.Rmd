@@ -168,13 +168,14 @@ shinyApp(ui = ui, server = server)
       Y [pos='2,1!']
       node [shape=circle, height=0.4, fixedsize=true]
       Ec [label='&epsilon;@_{C}', pos='1,-1!']
+      Ey [label='&epsilon;@_{y}', pos='2,2!']
       { rank = same; X Y }
       X -> C [label='&beta;@_{xc}']
       Y -> C [minlen=.5, label='&beta;@_{yc}']
       X -> Y [label='&beta;@_{xy}']
       Ec -> C [label=1]
       X -> X [dir='both', headport='w']
-      Y -> Y [dir='both', headport='e']
+      Ey -> Y [label=1]
       }
       "})
     })
@@ -210,4 +211,4 @@ Authors:
 - Tom Palmer, Department of Mathematics and Statistics, Lancaster University, Lancaster, UK
 - Kate Tilling, MRC Integrative Epidemiology Unit at the University of Bristol, Bristol, UK
 
-Please email, <tom.palmer@lancaster.ac.uk>, or see the GitHub repo with any questions or comments.
+Please email, <tom.palmer@lancaster.ac.uk>, with any questions or comments or see the GitHub repo.
