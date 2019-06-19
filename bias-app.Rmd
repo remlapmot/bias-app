@@ -57,7 +57,7 @@ colliderbias <-
       fluidRow(
         column(6,
       p(
-        "In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, $C$, from the regression of $Y$ on $X$."),
+        "In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, \\(C\\), from the regression of \\(Y\\) on \\(X\\)."),
         br(),
         p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{Var}(C)}{\\beta_{cx}^2\\text{Var}(C) + \\sigma_{X}^2}$$"),
         br(),
