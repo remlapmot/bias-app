@@ -59,7 +59,7 @@ colliderbias <-
       p(
         "In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, \\(C\\), from the regression of \\(Y\\) on \\(X\\)."),
         br(),
-        p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for $C$ is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{Var}(C)}{\\beta_{cx}^2\\text{Var}(C) + \\sigma_{X}^2}$$"),
+        p("The bias in the estimate of $\\beta_{xy}$ when we do not adjust for \\(C\\) is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{Var}(C)}{\\beta_{cx}^2\\text{Var}(C) + \\sigma_{X}^2}$$"),
         br(),
         p("The plot below visualises this bias. Change the settings to explore how the bias changes."
       )),
@@ -68,11 +68,11 @@ colliderbias <-
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("ratio", "Ratio: $\\beta_{cx} / \\beta_{cy}$", value = 1, step = 0.1, width = "100px")),
+             numericInput("ratio", "Ratio: \\(\\beta_{cx} / \\beta_{cy}\\)", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varc", "$\\text{Var}(C)$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varc", "\\(\\text{Var}(C)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("sigma2x", "$\\sigma^2_{X}$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2x", "\\(\\sigma^2_{X}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -134,7 +134,7 @@ shinyApp(ui = ui, server = server)
       fluidRow(
         column(6,
       p(
-        "In this model, shown in the path diagram on the right, we consider the effect of including a collider, $C$, in the regression of $Y$ on $X$ and $C$."),
+        "In this model, shown in the path diagram on the right, we consider the effect of including a collider, \\(C\\), in the regression of \\(Y\\) on \\(X\\) and \\(C\\)."),
         br(),
         p("The bias in the estimate of $\\beta_{xy}$ when we adjust for $C$ is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{Var}(Y)- \\beta_{xy}^2\\text{Var}(X))\\beta_{yc}}{\\text{Var}(C) - \\text{Var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
         br(),
@@ -145,15 +145,15 @@ shinyApp(ui = ui, server = server)
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("ratio", "Ratio: $\\beta_{xc} / \\beta_{yc}$", value = 1, step = 0.1, width = "100px")),
+             numericInput("ratio", "Ratio: \\(\\beta_{xc} / \\beta_{yc}\\)", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("bxy", "$\\beta_{xy}$", value = 0, step = 0.1, width = "100px")),
+             numericInput("bxy", "\\(\\beta_{xy}\\)", value = 0, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varx", "$\\text{Var}(X)$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "\\(\\text{Var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2y", "$\\sigma^2_{y}$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2y", "\\(\\sigma^2_{y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2c", "$\\sigma^2_{c}$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2c", "\\(\\sigma^2_{c}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
