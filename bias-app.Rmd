@@ -34,15 +34,22 @@ confounderbias <-
     }
   }
 
-colliderbias <- function(x, ratio, bxy, varx = 1, sigma2y = 1, sigma2c = 1) {
-  # x is bxc
-  byc <- x / ratio
-  vary <- bxy^2 * varx + sigma2y
-  varc <- x^2 * varx + byc^2 * vary + 2 * x * bxy * byc * varx + sigma2c
-  num <- -1 * (bxy * bxy + x) * (vary - bxy^2 * varx) * byc
-  den <- varc - varx * (bxy * byc + x)^2
-  num / den
-}
+colliderbias <-
+  function(x = 0.1,
+           ratio = 1,
+           bxy = 0,
+           varx = 1,
+           sigma2y = 1,
+           sigma2c = 1) {
+    # x is bxc
+    byc <- x / ratio
+    vary <- bxy ^ 2 * varx + sigma2y
+    varc <-
+      (x ^ 2 * varx) + (byc ^ 2 * vary) + (2 * x * bxy * byc * varx) + sigma2c
+    num <- -1 * (bxy * bxy + x) * (vary - bxy ^ 2 * varx) * byc
+    den <- varc - varx * (bxy * byc + x) ^ 2
+    num / den
+  }
 ```
 
 # Confounding {data-height=800}
@@ -67,9 +74,9 @@ colliderbias <- function(x, ratio, bxy, varx = 1, sigma2y = 1, sigma2c = 1) {
       column(2,
              numericInput("ratio", "Ratio: $\\beta_{cx} / \\beta_{cy}$", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varc", "$\\text{Var}(C)$", value = 1, step = 0.1, width = "100px")),
+             numericInput("varc", "$\\text{Var}(C)$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("sigma2x", "$\\sigma^2_{X}$", value = 1, step = 0.1, width = "100px")),
+             numericInput("sigma2x", "$\\sigma^2_{X}$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -147,13 +154,13 @@ shinyApp(ui = ui, server = server)
       column(2,
              numericInput("ratio", "Ratio: $\\beta_{xc} / \\beta_{yc}$", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varx", "$\\beta_{xy}$", value = 0, step = 0.1, width = "100px")),
+             numericInput("bxy", "$\\beta_{xy}$", value = 0, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varx", "$\\text{Var}(X)$", value = 1, step = 0.1, width = "100px")),
+             numericInput("varx", "$\\text{Var}(X)$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2x", "$\\sigma^2_{y}$", value = 1, step = 0.1, width = "100px")),
+             numericInput("sigma2y", "$\\sigma^2_{y}$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2x", "$\\sigma^2_{c}$", value = 1, step = 0.1, width = "100px")),
+             numericInput("sigma2c", "$\\sigma^2_{c}$", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -193,9 +200,11 @@ shinyApp(ui = ui, server = server)
                mapping = aes(x = x)) + 
         stat_function(fun = colliderbias, 
                       colour = "blue",
-                      args = list(varc = input$varc,
-                                  sigma2x = input$sigma2x,
-                                  ratio = input$ratio)) +
+                      args = list(sigma2c = input$sigma2c,
+                                  sigma2y = input$sigma2y,
+                                  ratio = input$ratio,
+                                  bxy = input$bxy,
+                                  varx = input$varx)) +
         scale_x_continuous(limits = c(input$xmin, input$xmax)) + 
         ylab("Bias") + 
         xlab("$\\beta_{cx}$")
