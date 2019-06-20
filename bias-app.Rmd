@@ -46,6 +46,21 @@ colliderbias <-
     den <- varc - varx * (bxy * byc + x) ^ 2
     num / den
   }
+
+selectionbias <-
+  function(x = 1,
+           bxy = 1,
+           sigma2y = 1,
+           sigma2s = 1,
+           varx = 1) {
+    # x is bys
+    bys <- x
+    vary <- bxy ^ 2 * varx + sigma2y
+    vars <- bys ^ 2 * vary + sigma2s
+    num <- bxy * (varx * vars - bys ^ 2 * vary * varx) ^ 2
+    den <- varx * vars - (bxy * bys * varx) ^ 2
+    num / den
+  }
 ```
 
 # Confounding {data-height=800}
@@ -207,6 +222,10 @@ shinyApp(ui = ui, server = server)
 # Define as app ----
 shinyApp(ui = ui, server = server)
 ```
+
+# Selection
+
+
 
 # About
 
