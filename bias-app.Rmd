@@ -232,7 +232,7 @@ shinyApp(ui = ui, server = server)
       fluidRow(
         column(6,
       p(
-        "In this model, shown in the path diagram on the right, we consider the effect of adjusting for a variable, \\(S\\), which is caused by the outcome, i.e. we fit the regression of Y on X and S."),
+        "In this model, shown in the path diagram on the right, we consider the effect of adjusting for a variable, S, which is caused by the outcome, i.e. we fit the regression of Y on X and S."),
         br(),
         p("The plot below visualises this bias. Change the settings to explore how the bias changes."
       )),
