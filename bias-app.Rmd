@@ -59,7 +59,7 @@ selectionbias <-
     vars <- bys ^ 2 * vary + sigma2s
     num <- bxy * (varx * vars - bys ^ 2 * vary * varx) ^ 2
     den <- varx * vars - (bxy * bys * varx) ^ 2
-    num / den
+    (num / den) - bxy
   }
 ```
 
