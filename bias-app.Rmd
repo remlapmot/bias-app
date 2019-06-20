@@ -225,7 +225,81 @@ shinyApp(ui = ui, server = server)
 
 # Selection
 
+```{r}
+# ui ----
+  ui = fluidPage(
+    withMathJax(),
+      fluidRow(
+        column(6,
+      p(
+        "In this model, shown in the path diagram on the right, we consider the effect of adjusting for a variable, \\(S\\), which is caused by the outcome, i.e. we fit the regression of Y on X and S."),
+        br(),
+        p("The plot below visualises this bias. Change the settings to explore how the bias changes."
+      )),
+      column(6, grVizOutput("seldiagram", width = "250px"))
+      ),
+  fluidRow(column(12, plotlyOutput("plot1"))),
+    fluidRow(
+      column(2,
+             numericInput("bxy", "\\(\\beta_{xy}\\)", value = 1, step = 0.1, width = "100px")),
+      column(2,
+             numericInput("sigma2y", "\\(\\sigma^2_{Y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+      column(2,
+             numericInput("sigma2s", "\\(\\sigma^2_{S}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+      column(2,
+             numericInput("varx", "\\(\\text{Var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+      column(2,
+             numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
+      column(2,
+             numericInput("xmax", "X-axis max", value = 0.2, step = 0.1, width = "100px"))
+    )
+  )
+  
+# server ----
+  server = function(input, output) {
 
+    output$seldiagram <- renderGrViz({
+      grViz({"
+      digraph dag {
+      graph [rankdir=TB]
+      node [shape=box, width=0.3, height=0.3]
+      X 
+      Y
+      S
+      { rank = same; X Y S }
+      node [shape=circle, height=0.35, fixedsize=true]
+      Ey [label='&epsilon;@_{Y}']
+      Es [label='&epsilon;@_{S}']
+      { rank = same; Ey Es }
+      X -> Y [minlen=3, label='&beta;@_{xy}']
+      Y -> S [minlen=3, label='&beta;@_{ys}']
+      X -> X [dir='both', headport='w', tailport='w']
+      Ey -> Y [label=1]
+      Es -> S [label=1]
+      }
+      "})
+    })
+    
+    output$plot1 <- renderPlotly({
+        ggplotly(
+        ggplot(data = data.frame(x = 0), 
+               mapping = aes(x = x)) + 
+        stat_function(fun = selectionbias, 
+                      colour = "blue",
+                      args = list(bxy = input$bxy,
+                                  sigma2y = input$sigma2y,
+                                  sigma2s = input$sigma2s,
+                                  varx = input$varx)) +
+        scale_x_continuous(limits = c(input$xmin, input$xmax)) + 
+        ylab("Bias") + 
+        xlab("$\\beta_{ys}$")
+      )
+    })
+  }
+
+# Define as app ----
+shinyApp(ui = ui, server = server)
+```
 
 # About
 
