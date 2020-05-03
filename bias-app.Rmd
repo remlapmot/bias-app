@@ -306,7 +306,7 @@ shinyApp(ui = ui, server = server)
 Authors:
 
 - Rolf Grönwold, Department of Clinical Epidemiology/Department of Medical Statistics, Leiden University Medical Centre, Leiden, Netherlands
-- Tom Palmer, Department of Mathematics and Statistics, Lancaster University, Lancaster, UK
-- Kate Tilling, MRC Integrative Epidemiology Unit at the University of Bristol, Bristol, UK
+- Tom Palmer, MRC Integrative Epidemiology Unit and Population Health Sciences, Bristol Medical School, University of Bristol, Bristol, UK
+- Kate Tilling, MRC Integrative Epidemiology Unit and Population Health Sciences, Bristol Medical School, University of Bristol, Bristol, UK
 
-Please email, <tom.palmer@lancaster.ac.uk>, with any questions or comments or see the GitHub repo.
+Please email, <tom.palmer@bristol.ac.uk>, with any questions or comments or create an issue in the GitHub repo [here](https://github.com/remlapmot/bias-app/issues).
