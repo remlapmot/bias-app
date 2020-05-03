@@ -6,8 +6,13 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
+if (!requireNamespace("DiagrammeR", quietly = TRUE)) install.packages("DiagrammeR")
 library(DiagrammeR)
+
+if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 library(tidyverse)
+
+if (!requireNamespace("plotly", quietly = TRUE)) install.packages("plotly")
 library(plotly)
 ```
 
