@@ -303,6 +303,8 @@ shinyApp(ui = ui, server = server)
 
 # About
 
+This app accompanies our paper *Conditioning on a mediator*. A preprint is available [here](https://osf.io/sj7ch/).
+
 Authors:
 
 - Rolf Grönwold, Department of Clinical Epidemiology/Department of Medical Statistics, Leiden University Medical Centre, Leiden, Netherlands
