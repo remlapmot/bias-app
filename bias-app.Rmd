@@ -1,13 +1,18 @@
 ---
 title: "Bias App"
-#author: Grönwold, Palmer, Tilling
+#author: Rolf Grönwold, Tom Palmer, Kate Tilling
 output: flexdashboard::flex_dashboard
 runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
+if (!requireNamespace("DiagrammeR", quietly = TRUE)) install.packages("DiagrammeR")
 library(DiagrammeR)
+
+if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 library(tidyverse)
+
+if (!requireNamespace("plotly", quietly = TRUE)) install.packages("plotly")
 library(plotly)
 ```
 
@@ -63,7 +68,7 @@ selectionbias <-
   }
 ```
 
-# Confounding {data-height=800}
+# Confounding bias {data-height=800}
 
 ```{r}
 # ui ----
@@ -74,7 +79,7 @@ selectionbias <-
       p(
         "In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, \\(C\\), from the regression of \\(Y\\) on \\(X\\)."),
         br(),
-        p("The bias in the estimate of \\(\\beta_{xy}\\) when we do not adjust for \\(C\\) is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{Var}(C)}{\\beta_{cx}^2\\text{Var}(C) + \\sigma_{X}^2}$$"),
+        p("The bias in the estimate of \\(\\beta_{xy}\\) when we do not adjust for \\(C\\) is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"),
         br(),
         p("The plot below visualises this bias. Change the settings to explore how the bias changes."
       )),
@@ -85,7 +90,7 @@ selectionbias <-
       column(2,
              numericInput("ratio", "Ratio: \\(\\beta_{cx} / \\beta_{cy}\\)", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varc", "\\(\\text{Var}(C)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varc", "\\(\\text{var}(C)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("sigma2x", "\\(\\sigma^2_{X}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
@@ -136,11 +141,11 @@ selectionbias <-
     })
   }
 
-# Define as app ----
+# Define as an app ----
 shinyApp(ui = ui, server = server)
 ```
 
-# Colliding
+# Collider bias
 
 ```{r}
 # ui ----
@@ -151,7 +156,7 @@ shinyApp(ui = ui, server = server)
       p(
         "In this model, shown in the path diagram on the right, we consider the effect of including a collider, \\(C\\), in the regression of \\(Y\\) on \\(X\\) and \\(C\\)."),
         br(),
-        p("The bias in the estimate of \\(\\beta_{xy}\\) when we adjust for \\(C\\) is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{Var}(Y)- \\beta_{xy}^2\\text{Var}(X))\\beta_{yc}}{\\text{Var}(C) - \\text{Var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
+        p("The bias in the estimate of \\(\\beta_{xy}\\) when we adjust for \\(C\\) is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{var}(Y)- \\beta_{xy}^2\\text{var}(X))\\beta_{yc}}{\\text{var}(C) - \\text{var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
         br(),
         p("The plot below visualises this bias. Change the settings to explore how the bias changes."
       )),
@@ -164,7 +169,7 @@ shinyApp(ui = ui, server = server)
       column(2,
              numericInput("bxy", "\\(\\beta_{xy}\\)", value = 0, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varx", "\\(\\text{Var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "\\(\\text{var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
              numericInput("sigma2y", "\\(\\sigma^2_{y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
@@ -219,11 +224,11 @@ shinyApp(ui = ui, server = server)
     })
   }
 
-# Define as app ----
+# Define as an app ----
 shinyApp(ui = ui, server = server)
 ```
 
-# Selection
+# Selection bias
 
 ```{r}
 # ui ----
@@ -247,7 +252,7 @@ shinyApp(ui = ui, server = server)
       column(2,
              numericInput("sigma2s", "\\(\\sigma^2_{S}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("varx", "\\(\\text{Var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "\\(\\text{var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -297,16 +302,79 @@ shinyApp(ui = ui, server = server)
     })
   }
 
-# Define as app ----
+# Define as an app ----
 shinyApp(ui = ui, server = server)
+```
+
+<!--
+# Figure 2 - simualtion results
+-->
+
+<!--
+# Mediator with confounding
+-->
+
+<!-- 
+# Example 1, Figure 4
+-->
+
+# Figure 6: Difference in absolute bias plot
+
+This is for Example 2 in the preprint.
+
+Plot to compare bias under 2 analysis strategies:
+
+1. Analysis without adjustment (bias due to unmeasured confounding): UC
+2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
+
+```{r}
+# function that quantifies bias due to unmeasured confounding:
+UC <- function(b.mu, b.mx, b.xu, b.ym, b.yu) b.xu*b.yu / (b.xu^2 + 1)
+
+# function that quantifies bias when conditioning on an intermediate:
+CIUC <- function(b.mu, b.mx, b.xu, b.ym, b.yu) {
+	(b.xu*b.yu - b.mu*b.mx*b.yu)/(b.xu^2 + b.mu^2 + 1) - b.mx*b.ym
+}
+
+# function that quantifies difference in absolute bias:
+delta.bias <- function(b.mu, b.mx, b.xu, b.ym, b.yu) {
+	abs(UC(b.mu,b.mx,b.xu,b.ym,b.yu)) - abs(CIUC(b.mu,b.mx,b.xu,b.ym,b.yu))
+}
+
+# ranges of values for different parameters:
+b_mu <- seq(0.9, 1.1, length.out = 10)
+b_mx <- seq(0.05, 0.15, length.out = 10)
+b_xu <- seq(0.15, 0.25, length.out = 10)
+b_ym <- seq(1.0, 1.2, length.out = 10)
+b_yu <- seq(0.6, 0.8, length.out = 10)
+
+input <- expand.grid(b_mu, b_mx, b_xu, b_ym, b_yu)
+diff.bias <- numeric(dim(input)[1])
+
+for (i in 1:length(diff.bias)){
+	diff.bias[i] <- delta.bias(input[i,1], input[i,2], input[i,3], input[i,4], input[i,5])
+}
+# mean(diff.bias > 0)
+
+plot(density(diff.bias), 
+	yaxt = 'n', 
+	xlab = 'Difference in absolute bias', 
+	main = '',
+	xlim = c(-.3,.3),
+	ylab = '')
+	lines(x = c(0,0), y = c(0,1e2), lty = 2)
+	text(x = -.15, y = 5.5,'Favours not conditioning', cex = .8)
+	text(x = .2, y = 5.5, 'Favours conditioning', cex = .8)
 ```
 
 # About
 
+This app accompanies our paper *Conditioning on a mediator*. The preprint is available [here](https://osf.io/sj7ch/).
+
 Authors:
 
 - Rolf Grönwold, Department of Clinical Epidemiology/Department of Medical Statistics, Leiden University Medical Centre, Leiden, Netherlands
-- Tom Palmer, Department of Mathematics and Statistics, Lancaster University, Lancaster, UK
-- Kate Tilling, MRC Integrative Epidemiology Unit at the University of Bristol, Bristol, UK
+- Tom Palmer, MRC Integrative Epidemiology Unit and Population Health Sciences, Bristol Medical School, University of Bristol, Bristol, UK
+- Kate Tilling, MRC Integrative Epidemiology Unit and Population Health Sciences, Bristol Medical School, University of Bristol, Bristol, UK
 
-Please email, <tom.palmer@lancaster.ac.uk>, with any questions or comments or see the GitHub repo.
+Please email, <tom.palmer@bristol.ac.uk>, with any questions or comments or create an issue in the GitHub repo [here](https://github.com/remlapmot/bias-app/issues).
