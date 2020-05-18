@@ -88,11 +88,11 @@ Row {data-height=650}
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("ratio", "Ratio: \\(\\beta_{cx} / \\beta_{cy}\\)", value = 1, step = 0.1, width = "100px")),
+             numericInput("ratio", "βcx/βcy", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varc", "\\(\\text{var}(C)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varc", "var(C)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("sigma2x", "\\(\\sigma^2_{X}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2x", "sigma^2x", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -209,15 +209,15 @@ Row {data-height=650}
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("ratio", "Ratio: \\(\\beta_{xc} / \\beta_{yc}\\)", value = 1, step = 0.1, width = "100px")),
+             numericInput("ratio", "βxc/βyc", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("bxy", "\\(\\beta_{xy}\\)", value = 0, step = 0.1, width = "100px")),
+             numericInput("bxy", "βxy", value = 0, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varx", "\\(\\text{var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "var(X)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2y", "\\(\\sigma^2_{y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2y", "sigma^2y", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2c", "\\(\\sigma^2_{c}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2c", "sigma^2c", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -333,20 +333,20 @@ Row {data-height=650}
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("bxy", "\\(\\beta_{xy}\\)", value = 1, step = 0.1, width = "100px")),
+             numericInput("bxy", "βxy", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("sigma2y", "\\(\\sigma^2_{Y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2y", "sigma^2y", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("sigma2s", "\\(\\sigma^2_{S}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2s", "sigma^2s", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("varx", "\\(\\text{var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "var(X)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
              numericInput("xmax", "X-axis max", value = 0.2, step = 0.1, width = "100px"))
     )
   )
-  
+
 # server ----
   server = function(input, output) {
 
