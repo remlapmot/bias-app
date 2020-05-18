@@ -354,7 +354,7 @@ diff.bias <- numeric(dim(input)[1])
 for (i in 1:length(diff.bias)){
 	diff.bias[i] <- delta.bias(input[i,1], input[i,2], input[i,3], input[i,4], input[i,5])
 }
-mean(diff.bias > 0)
+# mean(diff.bias > 0)
 
 plot(density(diff.bias), 
 	yaxt = 'n', 
