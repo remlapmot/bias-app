@@ -310,18 +310,24 @@ shinyApp(ui = ui, server = server)
 # Figure 2 - simualtion results
 -->
 
+<!--
 # Mediator with confounding
+-->
 
+<!-- 
 # Example 1, Figure 4
+-->
 
-# Example 2, Figure 6
+# Figure 6: Difference in absolute bias plot
+
+This is for Example 2 in the preprint.
+
+Plot to compare bias under 2 analysis strategies:
+
+1. Analysis without adjustment (bias due to unmeasured confounding): UC
+2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
 
 ```{r}
-# R code to generate plots that compare bias under 2 analysis strategies:
-# 1. analysis without adjustment (bias due to unmeasured confounding) = UC
-# 2. analysis with adjustment for an intermediate variable (proxy for unmeasured confounding) = CIUC
-# ===============================================
-# 
 # function that quantifies bias due to unmeasured confounding:
 UC <- function(b.mu, b.mx, b.xu, b.ym, b.yu) b.xu*b.yu / (b.xu^2 + 1)
 
@@ -350,14 +356,15 @@ for (i in 1:length(diff.bias)){
 }
 mean(diff.bias > 0)
 
-plot(density(diff.bias), yaxt='n', 
-	xlab = 'difference in absolute bias', 
+plot(density(diff.bias), 
+	yaxt = 'n', 
+	xlab = 'Difference in absolute bias', 
 	main = '',
 	xlim = c(-.3,.3),
 	ylab = '')
 	lines(x = c(0,0), y = c(0,1e2), lty = 2)
-	text(x = -.15, y = 5.5,'favours not conditioning', cex = .8)
-	text(x = .2, y = 5.5, 'favours conditioning', cex = .8)
+	text(x = -.15, y = 5.5,'Favours not conditioning', cex = .8)
+	text(x = .2, y = 5.5, 'Favours conditioning', cex = .8)
 ```
 
 # About
