@@ -306,11 +306,50 @@ shinyApp(ui = ui, server = server)
 shinyApp(ui = ui, server = server)
 ```
 
+<!--
+# Figure 2 - simualtion results
+-->
+
 # Mediator with confounding
 
 # Example 1, Figure 4
 
 # Example 2, Figure 6
+
+```{r}
+# R code to generate plots that compare bias under 2 analysis strategies:
+# 1. analysis without adjustment (bias due to unmeasured confounding) = UC
+# 2. analysis with adjustment for an intermediate variable (proxy for unmeasured confounding) = CIUC
+# ===============================================
+# 
+# function that quantifies bias due to unmeasured confounding:
+UC 		<- function(b.mu,b.mx,b.xu,b.ym,b.yu) b.xu*b.yu/(b.xu^2 + 1)
+
+# function that quantifies bias when conditioning on an intermediate:
+CIUC 		<- function(b.mu,b.mx,b.xu,b.ym,b.yu) (b.xu*b.yu - b.mu*b.mx*b.yu)/(b.xu^2 + b.mu^2 + 1) - b.mx*b.ym
+
+# function that quantifies difference in absolute bias:
+delta.bias 	<- function(b.mu,b.mx,b.xu,b.ym,b.yu) abs(UC(b.mu,b.mx,b.xu,b.ym,b.yu)) - abs(CIUC(b.mu,b.mx,b.xu,b.ym,b.yu))
+
+# ranges of values for different parameters:
+b_mu <- seq(0.9,1.1,length.out=10)
+b_mx <- seq(0.05,0.15,length.out=10)
+b_xu <- seq(0.15,0.25,length.out=10)
+b_ym <- seq(1.0,1.2,length.out=10)
+b_yu <- seq(0.6,0.8,length.out=10)
+
+input 	<- expand.grid(b_mu,b_mx,b_xu,b_ym,b_yu)
+diff.bias 	<- numeric(dim(input)[1])
+for (i in 1:length(diff.bias)){
+	diff.bias[i] <- delta.bias(input[i,1],input[i,2],input[i,3],input[i,4],input[i,5])
+	}
+mean(diff.bias > 0)
+
+plot(density(diff.bias),yaxt='n',xlab='difference in absolute bias', main='',xlim=c(-.3,.3),ylab='')
+	lines(x=c(0,0),y=c(0,1e2),lty=2)
+	text(x=-.15,y=5.5,'favours not conditioning',cex=.8)
+	text(x=.2,y=5.5,'favours conditioning',cex=.8)
+```
 
 # About
 
