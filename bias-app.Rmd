@@ -421,9 +421,87 @@ legend(x=0,y=.5,legend=c("unadjusted","adjusted"), fill=c("white","grey"), cex=2
 # Mediator with confounding
 -->
 
-<!-- 
-# Example 1, Figure 4
--->
+# Figure 4
+
+```{r}
+E.OLS.unadj <- function(V) {
+	s.u1=V[1]; 	s.u2=V[2]
+	s.x=V[3]; 	s.m=V[4]
+	s.y=V[5]; 	b.xy=V[6]
+	b.xm=V[7]; 	b.u1x=V[8]
+	b.u1m=V[9]; b.u1y=V[10]
+	b.my=V[11]; b.u2m=V[12]
+	b.u2y=V[13]
+	var.x 	<- b.u1x^2*s.u1^2 + s.x^2
+	cov.u1x 	<- s.u1^2*b.u1x
+	cov.xy 	<- b.xy*var.x + b.xm*b.my*var.x + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)
+	var.m 	<-  b.u1m^2*s.u1^2 + b.u2m^2*s.u2^2 + b.xm^2*var.x + 2*b.u1m*b.xm*cov.u1x + s.m^2 
+	cov.xm 	<- b.xm*var.x + b.u1x*s.u1^2*b.u1m
+	cov.my 	<- b.my*var.m + b.u1m*s.u1^2*b.u1y + b.u2m*s.u2^2*b.u2y + b.xm*b.u1x*s.u1^2*b.u1y + b.xm*var.x*b.xy + b.u1m*s.u1^2*b.u1x*b.xy
+
+	ref 	<- b.xy + b.xm*b.my		# reference: total effect:
+	unadj <- b.xy + b.xm*b.my + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)/var.x 	# without adjustment for M:
+	out 	<- unadj - ref
+	return(out)}
+
+E.OLS.adj <- function(V) {
+	s.u1=V[1]; 	s.u2=V[2]
+	s.x=V[3]; 	s.m=V[4]
+	s.y=V[5]; 	b.xy=V[6]
+	b.xm=V[7]; 	b.u1x=V[8]
+	b.u1m=V[9]; b.u1y=V[10]
+	b.my=V[11]; b.u2m=V[12]
+	b.u2y=V[13]
+	var.x 	<- b.u1x^2*s.u1^2 + s.x^2
+	cov.u1x 	<- s.u1^2*b.u1x
+	cov.xy 	<- b.xy*var.x + b.xm*b.my*var.x + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)
+	var.m 	<-  b.u1m^2*s.u1^2 + b.u2m^2*s.u2^2 + b.xm^2*var.x + 2*b.u1m*b.xm*cov.u1x + s.m^2 
+	cov.xm 	<- b.xm*var.x + b.u1x*s.u1^2*b.u1m
+	cov.my 	<- b.my*var.m + b.u1m*s.u1^2*b.u1y + b.u2m*s.u2^2*b.u2y + b.xm*b.u1x*s.u1^2*b.u1y + b.xm*var.x*b.xy + b.u1m*s.u1^2*b.u1x*b.xy
+
+  ref 	<- b.xy + b.xm*b.my		# reference: total effect:
+  adj 	<- (cov.xy*var.m - cov.my*cov.xm)/(var.x*var.m - cov.xm^2) 	# with adjustment for M:
+  adj - ref
+}
+
+s.u1 	<- s.u2 <- s.x <- s.m <- s.y <- 1
+b.xy 	<- 0
+b.xm 	<- seq(-.5, .5, .05) 	# b.xm=b.u1m
+b.u1x <- c(-0.3, .1, .4)	# b.u1x = b.u1y
+b.u1y <- 1; b.u1m <- 1
+b.my 	<- 0; 
+b.u2m <- b.u2y <- 0
+
+d 		<- expand.grid(s.u1, s.u2, s.x, s.m, s.y, b.xy, b.xm, b.u1x, b.u1m, b.u1y, b.my, b.u2m, b.u2y)
+names(d) 	<- c("s.u1", "s.u2", "s.x", "s.m", "s.y","b.xy", "b.xm", "b.u1x", "b.u1m",	"b.u1y", "b.my", "b.u2m", "b.u2y")
+d["b.u1m"] <- d["b.xm"]		# b.xm=b.u1m
+d["b.u1y"] <- d["b.u1x"]	# b.u1x = b.u1y
+
+Mat.unadj 	<- apply(d,1, E.OLS.unadj)
+Mat.adj 	<- apply(d,1, E.OLS.adj)
+
+dat 		<- data.frame(d)
+dat$unadj 	<- apply(d,1, E.OLS.unadj)
+dat$adj 	<- apply(d,1, E.OLS.adj)
+
+B.U1Y <- 0.1
+plot(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], type='l', ylim=c(-.05,.25), las=1, lty=3,
+		ylab='bias', xlab=expression(paste(beta[xm]," , ", beta[u1m])))
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
+text(x=0,y=-.015, expression(paste(beta[u1x],", ",beta[u1y]," = ",0.1)))
+
+B.U1Y <- 0.4
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], lty=3)
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
+text(x=0,y=.15,expression(paste(beta[u1x],", ",beta[u1y]," = ",0.4)))
+
+B.U1Y = -0.3
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], lty=3)
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
+text(x=0,y=0.07,expression(paste(beta[u1x],", ",beta[u1y]," = ",-0.3)))
+
+legend('topleft',legend=c("unadjusted", "adjusted"), lty=3:2, bty='n')
+```
 
 # Figure 6
 
