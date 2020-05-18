@@ -1,7 +1,10 @@
 ---
 title: "Bias App"
-#author: Rolf Grönwold, Tom Palmer, Kate Tilling
-output: flexdashboard::flex_dashboard
+# author: Rolf Grönwold, Tom Palmer, Kate Tilling
+output:
+  flexdashboard::flex_dashboard:
+    source_code: https://github.com/remlapmot/bias-app
+    vertical_layout: fill # scroll
 runtime: shiny
 ---
 
@@ -68,31 +71,28 @@ selectionbias <-
   }
 ```
 
-# Confounding bias {data-height=800}
+# Confounding bias {data-orientation=rows}
+
+Row {data-height=650}
+---
+
+### App 
 
 ```{r}
 # ui ----
   ui = fluidPage(
     withMathJax(),
-      fluidRow(
-        column(6,
-      p(
-        "In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, \\(C\\), from the regression of \\(Y\\) on \\(X\\)."),
-        br(),
-        p("The bias in the estimate of \\(\\beta_{xy}\\) when we do not adjust for \\(C\\) is given by: $$\\text{Bias} = \\frac{\\beta_{cx}\\beta_{cy}\\text{var}(C)}{\\beta_{cx}^2\\text{var}(C) + \\sigma_{X}^2}$$"),
-        br(),
-        p("The plot below visualises this bias. Change the settings to explore how the bias changes."
-      )),
-      column(6, grVizOutput("confdiagram", width = "250px"))
-      ),
+      # fluidRow(
+      # column(6, grVizOutput("confdiagram", width = "250px"))
+      # ),
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("ratio", "Ratio: \\(\\beta_{cx} / \\beta_{cy}\\)", value = 1, step = 0.1, width = "100px")),
+             numericInput("ratio", "βcx/βcy", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varc", "\\(\\text{var}(C)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varc", "var(C)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("sigma2x", "\\(\\sigma^2_{X}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2x", "sigma^2x", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -103,27 +103,27 @@ selectionbias <-
 # server ----
   server = function(input, output) {
 
-    output$confdiagram <- renderGrViz({
-      grViz({"
-      digraph dag {
-      graph [rankdir=TB]
-      node [shape=plaintext, width=0.3, height=0.3]
-      X 
-      C 
-      Y
-      node [shape=circle, height=0.3, fixedsize=true]
-      Ex [label='&epsilon;@_{x}']
-      Ey [label='&epsilon;@_{y}']
-      { rank = same; X Y }
-      X -> Y [minlen=3, label='&beta;@_{xy}']
-      C -> X [label='&beta;@_{cx}']
-      C -> Y [minlen=.5, label='&beta;@_{cy}']
-      C -> C [dir='both', headport='n', tailport='n']
-      Ex -> X [label='1']
-      Ey -> Y [label='1']
-      }
-      "})
-    })
+    # output$confdiagram <- renderGrViz({
+    #   grViz({"
+    #   digraph dag {
+    #   graph [rankdir=TB]
+    #   node [shape=plaintext, width=0.3, height=0.3]
+    #   X 
+    #   C 
+    #   Y
+    #   node [shape=circle, height=0.3, fixedsize=true]
+    #   Ex [label='&epsilon;@_{x}']
+    #   Ey [label='&epsilon;@_{y}']
+    #   { rank = same; X Y }
+    #   X -> Y [minlen=3, label='&beta;@_{xy}']
+    #   C -> X [label='&beta;@_{cx}']
+    #   C -> Y [minlen=.5, label='&beta;@_{cy}']
+    #   C -> C [dir='both', headport='n', tailport='n']
+    #   Ex -> X [label='1']
+    #   Ey -> Y [label='1']
+    #   }
+    #   "})
+    # })
     
     output$plot1 <- renderPlotly({
         ggplotly(
@@ -145,35 +145,79 @@ selectionbias <-
 shinyApp(ui = ui, server = server)
 ```
 
-# Collider bias
+Row {data-height=350}
+---
+
+### Description
+
+In this model, shown in the path diagram on the right, we consider the effect of omitting a confounder, \(C\), from the regression of \(Y\) on \(X\).
+
+The bias in the estimate of \(\beta_{xy}\) when we do not adjust for \(C\) is given by:
+$$
+\text{Bias} = \frac{\beta_{cx}\beta_{cy}\text{var}(C)}{\beta_{cx}^2\text{var}(C) + \sigma_{X}^2}
+$$
+
+The plot shows this bias. Change the settings to explore how the bias changes.
+
+### Model
+
+```{r}
+DiagrammeR::grViz("
+      digraph dag {
+      graph [rankdir=TB]
+      node [shape=box, height=0.4, width=0.4]
+      X
+      Y
+      node [shape=plaintext, width=0.3, height=0.3]
+      C 
+      node [shape=circle, height=0.3, fixedsize=true]
+      Ex [label='&epsilon;@_{x}']
+      Ey [label='&epsilon;@_{y}']
+      { rank = same; X Y }
+      X -> Y [minlen=3, label='&beta;@_{xy}']
+      C -> X [label='&beta;@_{cx}']
+      C -> Y [minlen=.5, label='&beta;@_{cy}']
+      C -> C [dir='both', headport='n', tailport='n']
+      Ex -> X [label='1']
+      Ey -> Y [label='1']
+      }
+      ")
+```
+
+# Collider bias {data-orientation=rows}
+
+Row {data-height=650}
+---
+
+### App
 
 ```{r}
 # ui ----
   ui = fluidPage(
     withMathJax(),
-      fluidRow(
-        column(6,
-      p(
-        "In this model, shown in the path diagram on the right, we consider the effect of including a collider, \\(C\\), in the regression of \\(Y\\) on \\(X\\) and \\(C\\)."),
-        br(),
-        p("The bias in the estimate of \\(\\beta_{xy}\\) when we adjust for \\(C\\) is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{var}(Y)- \\beta_{xy}^2\\text{var}(X))\\beta_{yc}}{\\text{var}(C) - \\text{var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
-        br(),
-        p("The plot below visualises this bias. Change the settings to explore how the bias changes."
-      )),
-      column(6, grVizOutput("confdiagram", width = "250px"))
-      ),
+      # fluidRow(
+      #   column(6,
+      # p(
+      #   "In this model, shown in the path diagram on the right, we consider the effect of including a collider, \\(C\\), in the regression of \\(Y\\) on \\(X\\) and \\(C\\)."),
+      #   br(),
+      #   p("The bias in the estimate of \\(\\beta_{xy}\\) when we adjust for \\(C\\) is given by: $$\\text{Bias} = -\\frac{(\\beta_{xy}\\beta_{yc} + \\beta_{xc})(\\text{var}(Y)- \\beta_{xy}^2\\text{var}(X))\\beta_{yc}}{\\text{var}(C) - \\text{var}(X)(\\beta_{xy}\\beta_{yc} + \\beta_{xc})^2}$$"),
+      #   br(),
+      #   p("The plot below visualises this bias. Change the settings to explore how the bias changes."
+      # )),
+      # column(6, grVizOutput("confdiagram", width = "250px"))
+      # ),
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("ratio", "Ratio: \\(\\beta_{xc} / \\beta_{yc}\\)", value = 1, step = 0.1, width = "100px")),
+             numericInput("ratio", "βxc/βyc", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("bxy", "\\(\\beta_{xy}\\)", value = 0, step = 0.1, width = "100px")),
+             numericInput("bxy", "βxy", value = 0, step = 0.1, width = "100px")),
       column(2,
-             numericInput("varx", "\\(\\text{var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "var(X)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2y", "\\(\\sigma^2_{y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2y", "sigma^2y", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(1,
-             numericInput("sigma2c", "\\(\\sigma^2_{c}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2c", "sigma^2c", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
@@ -184,27 +228,27 @@ shinyApp(ui = ui, server = server)
 # server ----
   server = function(input, output) {
 
-    output$confdiagram <- renderGrViz({
-      grViz({"
-      digraph dag {
-      graph [rankdir=TB, layout=neato]
-      node [shape=box, height=0.4, width=0.4]
-      X [pos='0,1!']
-      C [pos='1,0!']
-      Y [pos='2,1!']
-      node [shape=circle, height=0.4, fixedsize=true]
-      Ec [label='&epsilon;@_{C}', pos='1,-1!']
-      Ey [label='&epsilon;@_{y}', pos='2,2!']
-      { rank = same; X Y }
-      X -> C [label='&beta;@_{xc}']
-      Y -> C [minlen=.5, label='&beta;@_{yc}']
-      X -> Y [label='&beta;@_{xy}']
-      Ec -> C [label=1]
-      X -> X [dir='both', headport='w']
-      Ey -> Y [label=1]
-      }
-      "})
-    })
+    # output$confdiagram <- renderGrViz({
+    #   grViz({"
+    #   digraph dag {
+    #   graph [rankdir=TB, layout=neato]
+    #   node [shape=box, height=0.4, width=0.4]
+    #   X [pos='0,1!']
+    #   C [pos='1,0!']
+    #   Y [pos='2,1!']
+    #   node [shape=circle, height=0.4, fixedsize=true]
+    #   Ec [label='&epsilon;@_{C}', pos='1,-1!']
+    #   Ey [label='&epsilon;@_{y}', pos='2,2!']
+    #   { rank = same; X Y }
+    #   X -> C [label='&beta;@_{xc}']
+    #   Y -> C [minlen=.5, label='&beta;@_{yc}']
+    #   X -> Y [label='&beta;@_{xy}']
+    #   Ec -> C [label=1]
+    #   X -> X [dir='both', headport='w']
+    #   Ey -> Y [label=1]
+    #   }
+    #   "})
+    # })
     
     output$plot1 <- renderPlotly({
         ggplotly(
@@ -228,62 +272,105 @@ shinyApp(ui = ui, server = server)
 shinyApp(ui = ui, server = server)
 ```
 
-# Selection bias
+Row {data-height=350}
+---
+
+### Description
+
+In this model, shown in the path diagram, we consider the effect of including a collider, \(C\), in the regression of \(Y\) on \(X\) and \(C\).
+
+The bias in the estimate of \(\beta_{xy}\) when we adjust for \(C\) is given by: 
+$$
+\text{Bias} = -\frac{(\beta_{xy}\beta_{yc} + \beta_{xc})(\text{var}(Y) -  \beta_{xy}^2\text{var}(X))\beta_{yc}}{\text{var}(C) - \text{var}(X)(\beta_{xy}\beta_{yc} + \beta_{xc})^2}
+$$
+      
+The plot shows this bias. Change the settings to explore how the bias changes.
+
+### Model
+
+```{r}
+DiagrammeR::grViz("
+      digraph dag {
+      graph [rankdir=TB, layout=neato]
+      node [shape=box, height=0.4, width=0.4]
+      X [pos='0,1!']
+      C [pos='1,0!']
+      Y [pos='2,1!']
+      node [shape=circle, height=0.4, fixedsize=true]
+      Ec [label='&epsilon;@_{C}', pos='1,-1!']
+      Ey [label='&epsilon;@_{y}', pos='2,2!']
+      { rank = same; X Y }
+      X -> C [label='&beta;@_{xc}']
+      Y -> C [minlen=.5, label='&beta;@_{yc}']
+      X -> Y [label='&beta;@_{xy}']
+      Ec -> C [label=1]
+      X -> X [dir='both', headport='w']
+      Ey -> Y [label=1]
+      }
+")
+```
+
+# Selection bias {data-orientation=rows}
+
+Row {data-height=650}
+---
+
+### App
 
 ```{r}
 # ui ----
   ui = fluidPage(
     withMathJax(),
-      fluidRow(
-        column(6,
-      p(
-        "In this model, shown in the path diagram on the right, we consider the effect of adjusting for a variable, S, which is caused by the outcome, i.e. we fit the regression of Y on X and S."),
-        br(),
-        p("The plot below visualises this bias. Change the settings to explore how the bias changes."
-      )),
-      column(6, grVizOutput("seldiagram", width = "250px"))
-      ),
+      # fluidRow(
+      #   column(6,
+      # p(
+      #   "In this model, shown in the path diagram on the right, we consider the effect of adjusting for a variable, S, which is caused by the outcome, i.e. we fit the regression of Y on X and S."),
+      #   br(),
+      #   p("The plot below visualises this bias. Change the settings to explore how the bias changes."
+      # )),
+      # column(6, grVizOutput("seldiagram", width = "250px"))
+      # ),
   fluidRow(column(12, plotlyOutput("plot1"))),
     fluidRow(
       column(2,
-             numericInput("bxy", "\\(\\beta_{xy}\\)", value = 1, step = 0.1, width = "100px")),
+             numericInput("bxy", "βxy", value = 1, step = 0.1, width = "100px")),
       column(2,
-             numericInput("sigma2y", "\\(\\sigma^2_{Y}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2y", "sigma^2y", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("sigma2s", "\\(\\sigma^2_{S}\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("sigma2s", "sigma^2s", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
-             numericInput("varx", "\\(\\text{var}(X)\\)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
+             numericInput("varx", "var(X)", value = 1, step = 0.1, width = "100px", min = 1e-6)),
       column(2,
              numericInput("xmin", "X-axis min", value = -0.2, step = 0.1, width = "100px")),
       column(2,
              numericInput("xmax", "X-axis max", value = 0.2, step = 0.1, width = "100px"))
     )
   )
-  
+
 # server ----
   server = function(input, output) {
 
-    output$seldiagram <- renderGrViz({
-      grViz({"
-      digraph dag {
-      graph [rankdir=TB]
-      node [shape=box, width=0.3, height=0.3]
-      X 
-      Y
-      S
-      { rank = same; X Y S }
-      node [shape=circle, height=0.35, fixedsize=true]
-      Ey [label='&epsilon;@_{Y}']
-      Es [label='&epsilon;@_{S}']
-      { rank = same; Ey Es }
-      X -> Y [minlen=3, label='&beta;@_{xy}']
-      Y -> S [minlen=3, label='&beta;@_{ys}']
-      X -> X [dir='both', headport='w', tailport='w']
-      Ey -> Y [label=1]
-      Es -> S [label=1]
-      }
-      "})
-    })
+    # output$seldiagram <- renderGrViz({
+    #   grViz({"
+    #   digraph dag {
+    #   graph [rankdir=TB]
+    #   node [shape=box, width=0.3, height=0.3]
+    #   X 
+    #   Y
+    #   S
+    #   { rank = same; X Y S }
+    #   node [shape=circle, height=0.35, fixedsize=true]
+    #   Ey [label='&epsilon;@_{Y}']
+    #   Es [label='&epsilon;@_{S}']
+    #   { rank = same; Ey Es }
+    #   X -> Y [minlen=3, label='&beta;@_{xy}']
+    #   Y -> S [minlen=3, label='&beta;@_{ys}']
+    #   X -> X [dir='both', headport='w', tailport='w']
+    #   Ey -> Y [label=1]
+    #   Es -> S [label=1]
+    #   }
+    #   "})
+    # })
     
     output$plot1 <- renderPlotly({
         ggplotly(
@@ -306,26 +393,288 @@ shinyApp(ui = ui, server = server)
 shinyApp(ui = ui, server = server)
 ```
 
-<!--
-# Figure 2 - simualtion results
--->
+Row {data-height=350}
+---
 
-<!--
-# Mediator with confounding
--->
+### Description
 
-<!-- 
-# Example 1, Figure 4
--->
+In this model, shown in the path diagram, we consider the effect of adjusting for a variable, $S$, which is caused by the outcome, i.e. we fit the regression of $Y$ on $X$ and $S$.
 
-# Figure 6: Difference in absolute bias plot
+The plot shows this bias. Change the settings to explore how the bias changes.
 
-This is for Example 2 in the preprint.
+### Model
 
-Plot to compare bias under 2 analysis strategies:
+```{r}
+DiagrammeR::grViz({"
+      digraph dag {
+      graph [rankdir=TB]
+      node [shape=box, width=0.3, height=0.3]
+      X 
+      Y
+      S
+      { rank = same; X Y S }
+      node [shape=circle, height=0.35, fixedsize=true]
+      Ey [label='&epsilon;@_{Y}']
+      Es [label='&epsilon;@_{S}']
+      { rank = same; Ey Es }
+      X -> Y [minlen=3, label='&beta;@_{xy}']
+      Y -> S [minlen=3, label='&beta;@_{ys}']
+      X -> X [dir='both', headport='w', tailport='w']
+      Ey -> Y [label=1]
+      Es -> S [label=1]
+      }
+      "})
+```
 
-1. Analysis without adjustment (bias due to unmeasured confounding): UC
-2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
+# Figure 2 {data-orientation=rows}
+
+<!-- Row {data-height=350} -->
+<!-- --- -->
+
+<!-- ### Description -->
+
+<!-- Simulation results -->
+
+Row {data-height=1000}
+---------------------
+
+### Plot
+
+```{r}
+E.OLS.unadj <- function(V) {
+	s.u1=V[1]; 	s.u2=V[2]
+	s.x=V[3]; 	s.m=V[4]
+	s.y=V[5]; 	b.xy=V[6]
+	b.xm=V[7]; 	b.u1x=V[8]
+	b.u1m=V[9]; b.u1y=V[10]
+	b.my=V[11]; b.u2m=V[12]
+	b.u2y=V[13]
+	var.x 	<- b.u1x^2*s.u1^2 + s.x^2
+	cov.u1x 	<- s.u1^2*b.u1x
+	cov.xy 	<- b.xy*var.x + b.xm*b.my*var.x + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)
+	var.m 	<-  b.u1m^2*s.u1^2 + b.u2m^2*s.u2^2 + b.xm^2*var.x + 2*b.u1m*b.xm*cov.u1x + s.m^2 
+	cov.xm 	<- b.xm*var.x + b.u1x*s.u1^2*b.u1m
+	cov.my 	<- b.my*var.m + b.u1m*s.u1^2*b.u1y + b.u2m*s.u2^2*b.u2y + b.xm*b.u1x*s.u1^2*b.u1y + b.xm*var.x*b.xy + b.u1m*s.u1^2*b.u1x*b.xy
+
+	ref 	<- b.xy + b.xm*b.my		# reference: total effect:
+	unadj <- b.xy + b.xm*b.my + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)/var.x 	# without adjustment for M:
+	unadj - ref
+}
+
+E.OLS.adj <- function(V) {
+	s.u1=V[1]; 	s.u2=V[2]
+	s.x=V[3]; 	s.m=V[4]
+	s.y=V[5]; 	b.xy=V[6]
+	b.xm=V[7]; 	b.u1x=V[8]
+	b.u1m=V[9]; b.u1y=V[10]
+	b.my=V[11]; b.u2m=V[12]
+	b.u2y=V[13]
+	var.x 	<- b.u1x^2*s.u1^2 + s.x^2
+	cov.u1x 	<- s.u1^2*b.u1x
+	cov.xy 	<- b.xy*var.x + b.xm*b.my*var.x + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)
+	var.m 	<-  b.u1m^2*s.u1^2 + b.u2m^2*s.u2^2 + b.xm^2*var.x + 2*b.u1m*b.xm*cov.u1x + s.m^2 
+	cov.xm 	<- b.xm*var.x + b.u1x*s.u1^2*b.u1m
+	cov.my 	<- b.my*var.m + b.u1m*s.u1^2*b.u1y + b.u2m*s.u2^2*b.u2y + b.xm*b.u1x*s.u1^2*b.u1y + b.xm*var.x*b.xy + b.u1m*s.u1^2*b.u1x*b.xy
+
+	ref 	<- b.xy + b.xm*b.my		# reference: total effect:
+	adj 	<- (cov.xy*var.m - cov.my*cov.xm)/(var.x*var.m - cov.xm^2) 	# with adjustment for M:
+  adj - ref
+}
+
+s.u1 <- s.u2 <- s.x <- s.m <- s.y <- 1
+b.xy 	<- 0
+b.xm 	<- seq(0,1,.25)
+b.u1x <- seq(0,1,.25)
+b.u1m <- seq(0,1,.25)
+b.u1y <- seq(0,1,.25)
+b.my 	<- seq(0,1,.25)
+b.u2m <- seq(0,1,.25)
+b.u2y	<- seq(0,1,.25)
+
+d <- expand.grid(s.u1, s.u2, s.x, s.m, s.y,
+		b.xy, b.xm, b.u1x, b.u1m, 
+		b.u1y, b.my, b.u2m, b.u2y)
+
+Mat.unadj <- apply(d,1, E.OLS.unadj)
+Mat.adj <- apply(d,1, E.OLS.adj)
+
+dat <- data.frame(d)
+names(dat) <- c("s.u1", "s.u2", "s.x", "s.m", "s.y",
+		"b.xy", "b.xm", "b.u1x", "b.u1m", 
+		"b.u1y", "b.my", "b.u2m", "b.u2y")
+dat2 <- rbind(dat,dat)
+dat2$adjust <- rep(0:1,each=dim(dat)[1])
+dat2$bias <- c(Mat.unadj,Mat.adj)
+
+par(mfrow = c(2,4))
+# layout(matrix(c(1,2,3,4,5,6,7,8), 
+#              ncol=4, byrow=TRUE))
+# par(mai = rep(0.5, 4))
+boxplot(dat2$bias~dat2$adjust + dat2$b.xm, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[xm]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.xm); abline(0,0,lty=1)
+
+boxplot(dat2$bias~dat2$adjust + dat2$b.my, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[my]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.my); abline(0,0,lty=1)
+
+boxplot(dat2$bias~dat2$adjust + dat2$b.u1x, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[u1x]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.u1x); abline(0,0,lty=1)
+
+boxplot(dat2$bias~dat2$adjust + dat2$b.u1m, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[u1m]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.u1m); abline(0,0,lty=1)
+
+boxplot(dat2$bias~dat2$adjust + dat2$b.u1y, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[u1y]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.u1y); abline(0,0,lty=1)
+
+boxplot(dat2$bias~dat2$adjust + dat2$b.u2m, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[u2m]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.u2m); abline(0,0,lty=1)
+
+boxplot(dat2$bias~dat2$adjust + dat2$b.u2y, 
+	col=c("white","grey"),las=1,xlab='', main=expression(beta[u2y]), 
+	ylab='bias',xaxt='n', cex.main=2)
+axis(side=1,at=2*1:5-.5, labels=b.u2y); abline(0,0,lty=1)
+
+# par(mai = rep(0, 4))
+# plot.new()
+# plot(-1, -1, xlim = c(0,1),
+#      ylim = c(0,1),
+#      xaxt = 'n',
+#      yaxt = 'n',
+#      xlab = '',
+#      ylab = '',
+#      bty = 'n')
+# legend(x = "center",
+#        legend = c("unadjusted", "adjusted"),
+#        fill = c("white", "grey"), cex = 1)
+plot(-1,-1,xlim=c(0,1), ylim=c(0,1),xaxt='n',yaxt='n',xlab='',ylab='', bty='n')
+legend(x="center",
+       y="center",
+       legend=c("unadjusted","adjusted"),
+       fill=c("white","grey"), 
+       cex=.85)
+```
+
+Row 
+---
+
+### Description
+
+Bias in the OLS estimator of the $X$−$Y$ relation when conditioning on a mediator (adjusted) and when omitting a mediator (unadjusted), when the mediator is a affected by an unmeasured confounder. The distribution of bias values for each parameters is marginal over the values of the other parameters.
+
+# Figure 4 {data-orientation=rows}
+
+Row {data-height=650}
+---------------------
+
+### Plot
+
+```{r}
+E.OLS.unadj <- function(V) {
+	s.u1=V[1]; 	s.u2=V[2]
+	s.x=V[3]; 	s.m=V[4]
+	s.y=V[5]; 	b.xy=V[6]
+	b.xm=V[7]; 	b.u1x=V[8]
+	b.u1m=V[9]; b.u1y=V[10]
+	b.my=V[11]; b.u2m=V[12]
+	b.u2y=V[13]
+	var.x 	<- b.u1x^2*s.u1^2 + s.x^2
+	cov.u1x 	<- s.u1^2*b.u1x
+	cov.xy 	<- b.xy*var.x + b.xm*b.my*var.x + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)
+	var.m 	<-  b.u1m^2*s.u1^2 + b.u2m^2*s.u2^2 + b.xm^2*var.x + 2*b.u1m*b.xm*cov.u1x + s.m^2 
+	cov.xm 	<- b.xm*var.x + b.u1x*s.u1^2*b.u1m
+	cov.my 	<- b.my*var.m + b.u1m*s.u1^2*b.u1y + b.u2m*s.u2^2*b.u2y + b.xm*b.u1x*s.u1^2*b.u1y + b.xm*var.x*b.xy + b.u1m*s.u1^2*b.u1x*b.xy
+
+	ref 	<- b.xy + b.xm*b.my		# reference: total effect:
+	unadj <- b.xy + b.xm*b.my + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)/var.x 	# without adjustment for M:
+	out 	<- unadj - ref
+	return(out)}
+
+E.OLS.adj <- function(V) {
+	s.u1=V[1]; 	s.u2=V[2]
+	s.x=V[3]; 	s.m=V[4]
+	s.y=V[5]; 	b.xy=V[6]
+	b.xm=V[7]; 	b.u1x=V[8]
+	b.u1m=V[9]; b.u1y=V[10]
+	b.my=V[11]; b.u2m=V[12]
+	b.u2y=V[13]
+	var.x 	<- b.u1x^2*s.u1^2 + s.x^2
+	cov.u1x 	<- s.u1^2*b.u1x
+	cov.xy 	<- b.xy*var.x + b.xm*b.my*var.x + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)
+	var.m 	<-  b.u1m^2*s.u1^2 + b.u2m^2*s.u2^2 + b.xm^2*var.x + 2*b.u1m*b.xm*cov.u1x + s.m^2 
+	cov.xm 	<- b.xm*var.x + b.u1x*s.u1^2*b.u1m
+	cov.my 	<- b.my*var.m + b.u1m*s.u1^2*b.u1y + b.u2m*s.u2^2*b.u2y + b.xm*b.u1x*s.u1^2*b.u1y + b.xm*var.x*b.xy + b.u1m*s.u1^2*b.u1x*b.xy
+
+  ref 	<- b.xy + b.xm*b.my		# reference: total effect:
+  adj 	<- (cov.xy*var.m - cov.my*cov.xm)/(var.x*var.m - cov.xm^2) 	# with adjustment for M:
+  adj - ref
+}
+
+s.u1 	<- s.u2 <- s.x <- s.m <- s.y <- 1
+b.xy 	<- 0
+b.xm 	<- seq(-.5, .5, .05) 	# b.xm=b.u1m
+b.u1x <- c(-0.3, .1, .4)	# b.u1x = b.u1y
+b.u1y <- 1; b.u1m <- 1
+b.my 	<- 0; 
+b.u2m <- b.u2y <- 0
+
+d 		<- expand.grid(s.u1, s.u2, s.x, s.m, s.y, b.xy, b.xm, b.u1x, b.u1m, b.u1y, b.my, b.u2m, b.u2y)
+names(d) 	<- c("s.u1", "s.u2", "s.x", "s.m", "s.y","b.xy", "b.xm", "b.u1x", "b.u1m",	"b.u1y", "b.my", "b.u2m", "b.u2y")
+d["b.u1m"] <- d["b.xm"]		# b.xm=b.u1m
+d["b.u1y"] <- d["b.u1x"]	# b.u1x = b.u1y
+
+Mat.unadj 	<- apply(d,1, E.OLS.unadj)
+Mat.adj 	<- apply(d,1, E.OLS.adj)
+
+dat 		<- data.frame(d)
+dat$unadj 	<- apply(d,1, E.OLS.unadj)
+dat$adj 	<- apply(d,1, E.OLS.adj)
+
+B.U1Y <- 0.1
+plot(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], type='l', ylim=c(-.05,.25), las=1, lty=3,
+		ylab='bias', xlab=expression(paste(beta[xm]," , ", beta[u1m])))
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
+text(x=0,y=-.015, expression(paste(beta[u1x],", ",beta[u1y]," = ",0.1)))
+
+B.U1Y <- 0.4
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], lty=3)
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
+text(x=0,y=.15,expression(paste(beta[u1x],", ",beta[u1y]," = ",0.4)))
+
+B.U1Y = -0.3
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], lty=3)
+lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
+text(x=0,y=0.07,expression(paste(beta[u1x],", ",beta[u1y]," = ",-0.3)))
+
+legend('topleft', 
+       legend = c("unadjusted", "adjusted"), 
+       lty = 3:2, 
+       bty = 'n')
+```
+
+Row 
+---
+
+### Description
+
+Bias in Example 1 when conditioning on a mediator (adjusted) and when omitting a mediator (unadjusted), when the mediator is affected by an unmeasured confounder. See preprint for details.
+
+# Figure 6 {data-orientation=rows}
+
+Row {data-height=650}
+---------------------
+
+### Plot
 
 ```{r}
 # function that quantifies bias due to unmeasured confounding:
@@ -366,6 +715,18 @@ plot(density(diff.bias),
 	text(x = -.15, y = 5.5,'Favours not conditioning', cex = .8)
 	text(x = .2, y = 5.5, 'Favours conditioning', cex = .8)
 ```
+
+Row 
+---
+
+### Description
+
+This is for Example 2 in the preprint.
+
+Difference in absolute bias plot to compare bias under 2 analysis strategies:
+
+1. Analysis without adjustment (bias due to unmeasured confounding): UC
+2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
 
 # About
 
