@@ -1,7 +1,10 @@
 ---
 title: "Bias App"
-#author: Rolf Grönwold, Tom Palmer, Kate Tilling
-output: flexdashboard::flex_dashboard
+# author: Rolf Grönwold, Tom Palmer, Kate Tilling
+output:
+  flexdashboard::flex_dashboard:
+    source_code: https://github.com/remlapmot/bias-app
+    vertical_layout: fill # scroll
 runtime: shiny
 ---
 
@@ -69,6 +72,11 @@ selectionbias <-
 ```
 
 # Confounding bias {data-height=800}
+
+Row
+---
+
+### App
 
 ```{r}
 # ui ----
@@ -228,6 +236,13 @@ shinyApp(ui = ui, server = server)
 shinyApp(ui = ui, server = server)
 ```
 
+Row
+---
+
+### Description
+
+
+
 # Selection bias
 
 ```{r}
@@ -306,9 +321,19 @@ shinyApp(ui = ui, server = server)
 shinyApp(ui = ui, server = server)
 ```
 
-# Figure 2 
+# Figure 2 {data-orientation=rows}
 
-Simulation results.
+<!-- Row {data-height=350} -->
+<!-- --- -->
+
+<!-- ### Description -->
+
+<!-- Simulation results -->
+
+Row {data-height=1000}
+---------------------
+
+### Plot
 
 ```{r}
 E.OLS.unadj <- function(V) {
@@ -328,8 +353,8 @@ E.OLS.unadj <- function(V) {
 
 	ref 	<- b.xy + b.xm*b.my		# reference: total effect:
 	unadj <- b.xy + b.xm*b.my + b.u1x*s.u1^2*(b.u1y + b.u1m*b.my)/var.x 	# without adjustment for M:
-	out 	<- unadj - ref
-	return(out)}
+	unadj - ref
+}
 
 E.OLS.adj <- function(V) {
 	s.u1=V[1]; 	s.u2=V[2]
@@ -348,8 +373,8 @@ E.OLS.adj <- function(V) {
 
 	ref 	<- b.xy + b.xm*b.my		# reference: total effect:
 	adj 	<- (cov.xy*var.m - cov.my*cov.xm)/(var.x*var.m - cov.xm^2) 	# with adjustment for M:
-	out 	<- adj - ref
-	return(out)}
+  adj - ref
+}
 
 s.u1 <- s.u2 <- s.x <- s.m <- s.y <- 1
 b.xy 	<- 0
@@ -376,7 +401,10 @@ dat2 <- rbind(dat,dat)
 dat2$adjust <- rep(0:1,each=dim(dat)[1])
 dat2$bias <- c(Mat.unadj,Mat.adj)
 
-par(mfrow=c(2,4))
+par(mfrow = c(2,4))
+# layout(matrix(c(1,2,3,4,5,6,7,8), 
+#              ncol=4, byrow=TRUE))
+# par(mai = rep(0.5, 4))
 boxplot(dat2$bias~dat2$adjust + dat2$b.xm, 
 	col=c("white","grey"),las=1,xlab='', main=expression(beta[xm]), 
 	ylab='bias',xaxt='n', cex.main=2)
@@ -412,8 +440,24 @@ boxplot(dat2$bias~dat2$adjust + dat2$b.u2y,
 	ylab='bias',xaxt='n', cex.main=2)
 axis(side=1,at=2*1:5-.5, labels=b.u2y); abline(0,0,lty=1)
 
+# par(mai = rep(0, 4))
+# plot.new()
+# plot(-1, -1, xlim = c(0,1),
+#      ylim = c(0,1),
+#      xaxt = 'n',
+#      yaxt = 'n',
+#      xlab = '',
+#      ylab = '',
+#      bty = 'n')
+# legend(x = "center",
+#        legend = c("unadjusted", "adjusted"),
+#        fill = c("white", "grey"), cex = 1)
 plot(-1,-1,xlim=c(0,1), ylim=c(0,1),xaxt='n',yaxt='n',xlab='',ylab='', bty='n')
-legend(x=0,y=.5,legend=c("unadjusted","adjusted"), fill=c("white","grey"), cex=2)
+legend(x="center",
+       y="center",
+       legend=c("unadjusted","adjusted"),
+       fill=c("white","grey"), 
+       cex=.85)
 ```
 
 
@@ -421,7 +465,12 @@ legend(x=0,y=.5,legend=c("unadjusted","adjusted"), fill=c("white","grey"), cex=2
 # Mediator with confounding
 -->
 
-# Figure 4
+# Figure 4 {data-orientation=rows}
+
+Row {data-height=650}
+---------------------
+
+### Plot
 
 ```{r}
 E.OLS.unadj <- function(V) {
@@ -500,17 +549,18 @@ lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$unadj[dat$b.u1y==B.U1Y], lty=3)
 lines(dat$b.xm[dat$b.u1y==B.U1Y], dat$adj[dat$b.u1y==B.U1Y], lty=2)
 text(x=0,y=0.07,expression(paste(beta[u1x],", ",beta[u1y]," = ",-0.3)))
 
-legend('topleft',legend=c("unadjusted", "adjusted"), lty=3:2, bty='n')
+legend('topleft', 
+       legend = c("unadjusted", "adjusted"), 
+       lty = 3:2, 
+       bty = 'n')
 ```
 
-# Figure 6
+# Figure 6 {data-orientation=rows}
 
-This is for Example 2 in the preprint.
+Row {data-height=650}
+---------------------
 
-Difference in absolute bias plot to compare bias under 2 analysis strategies:
-
-1. Analysis without adjustment (bias due to unmeasured confounding): UC
-2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
+### Plot
 
 ```{r}
 # function that quantifies bias due to unmeasured confounding:
@@ -551,6 +601,18 @@ plot(density(diff.bias),
 	text(x = -.15, y = 5.5,'Favours not conditioning', cex = .8)
 	text(x = .2, y = 5.5, 'Favours conditioning', cex = .8)
 ```
+
+Row 
+---
+
+### Description
+
+This is for Example 2 in the preprint.
+
+Difference in absolute bias plot to compare bias under 2 analysis strategies:
+
+1. Analysis without adjustment (bias due to unmeasured confounding): UC
+2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
 
 # About
 
