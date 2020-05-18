@@ -1,6 +1,6 @@
 # bias-app
 
-Shiny web application to demonstrate bias in regression coefficients.
+Shiny web application to demonstrate bias in regression coefficients under different models (confounding, collider bias, etc.).
 
 This app accompanies our paper *Conditioning on a mediator*. A preprint is available [here](https://osf.io/sj7ch/).
 
