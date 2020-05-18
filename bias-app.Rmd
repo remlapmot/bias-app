@@ -565,10 +565,12 @@ legend(x="center",
        cex=.85)
 ```
 
+Row 
+---
 
-<!--
-# Mediator with confounding
--->
+### Description
+
+Bias in the OLS estimator of the $X$−$Y$ relation when conditioning on a mediator (adjusted) and when omitting a mediator (unadjusted), when the mediator is a affected by an unmeasured confounder. The distribution of bias values for each parameters is marginal over the values of the other parameters.
 
 # Figure 4 {data-orientation=rows}
 
@@ -659,6 +661,13 @@ legend('topleft',
        lty = 3:2, 
        bty = 'n')
 ```
+
+Row 
+---
+
+### Description
+
+Bias in Example 1 when conditioning on a mediator (adjusted) and when omitting a mediator (unadjusted), when the mediator is affected by an unmeasured confounder. See preprint for details.
 
 # Figure 6 {data-orientation=rows}
 
