@@ -306,9 +306,14 @@ shinyApp(ui = ui, server = server)
 shinyApp(ui = ui, server = server)
 ```
 
-<!--
-# Figure 2 - simualtion results
--->
+# Figure 2 
+
+Simulation results.
+
+```{r}
+
+```
+
 
 <!--
 # Mediator with confounding
@@ -318,11 +323,11 @@ shinyApp(ui = ui, server = server)
 # Example 1, Figure 4
 -->
 
-# Figure 6: Difference in absolute bias plot
+# Figure 6
 
 This is for Example 2 in the preprint.
 
-Plot to compare bias under 2 analysis strategies:
+Difference in absolute bias plot to compare bias under 2 analysis strategies:
 
 1. Analysis without adjustment (bias due to unmeasured confounding): UC
 2. Analysis with adjustment for an intermediate variable (proxy for unmeasured confounding): CIUC
